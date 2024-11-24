@@ -1,0 +1,101 @@
+--- 
+
+#-------------------------------------------------
+# MQTT setting
+
+MQTT_SERVER:
+MQTT_PORT:
+MQTT_LOGIN: 
+MQTT_PASSWORD:
+MQTT_BASE_TOPIC: homesrv  
+MQTT_DISABLE: True
+
+#-------------------------------------------------
+# DButils
+
+CLIENT_ID:      "xxxxxx"
+CLIENT_SECRET:  "xxxxxx"
+
+REFRESH_SCHEDULE: 1800  # refresh interval from (main) schedule [seconds]
+REFRESH_CHANGES: 30     # refreh interval for changes [seconds] (should not be set <30s)
+REFRESH_DISRUPTIONS: 300 # refreh interval for disruptions [seconds]
+
+TIMETABLE_BASE_URL:   "https://apis.deutschebahn.com/db-api-marketplace/apis/timetables/v1/"
+DISRUPTIONS_BASE_URL:   "https://www.s-bahn-muenchen.de/.rest/verkehrsmeldungen?path=%2Faktuell"
+
+#-------------------------------------------------
+# openweathermap setting
+
+api_key: xxxxxxxxx # put your api key here 
+lang:    de
+units:   metric
+
+locations:  # you can specify you locations here, or add them during runtime
+    CityABC:
+        country: DE
+        state: 
+        lat: 41.123
+        lon: 10.123
+
+# Texts - you can change them if you want
+uv_index:
+    0: "niedrig"         
+    1: "mittel"
+    2: "hoch"
+    3: "sehr hoch"
+    4: "extrem"
+
+visibility:
+    0: "extremer Nebel"
+    1: "sehr starker Nebel"
+    2: "starker Nebel"
+    3: "Nebel"
+    4: "leichter Nebel"
+    5: "dunstig"
+    6: "leicht diesig"
+    7: "klar"
+
+clouds:
+    0:  "wolkenlos"
+    1:  "sonnig"
+    2:  "heiter"
+    3:  "leicht bewölkt"
+    4:  "wolkig"
+    5:  "bewölkt"
+    6:  "stark bewölkt"
+    7:  "fast bedeckt"
+    8:  "bedeckt"
+
+daytime:
+    7:  "Morgens"
+    10: "Vormittags" 
+    13: "Mittags"
+    16: "Nachmittags" 
+    19: "Abends" 
+    23: "Nachts"
+
+moonphase:
+    0: "Neumond"
+    1: "zunehmende Sichel"
+    2: "zunehmender Halbmond"
+    3: "zunehmender Mond"
+    4: "Vollmond"
+    5: "abnehmender Mond"
+    6: "abnehmende Halbmond"
+    7: "abnehmende Sichel"
+    8: "Neumond"
+
+precipitation:
+    0: "kein"
+    1: "leicht"
+    2: "mäßig"
+    3: "stark"
+    4: "sehr stark"
+    5: "extrem"
+
+prec_forecast:
+    prec_ends: "Niederschlag endet gegen {}"
+    prec_starts: "Beginnender Niederschlag gegen {}" 
+    prec_cont: "Anhaltender Niederschlag"
+    prec_no: "Kein Niederschlag in Sicht"
+
