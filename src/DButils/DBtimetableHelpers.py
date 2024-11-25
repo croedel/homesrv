@@ -27,6 +27,10 @@ class DBtimetable:
         self.timetable.extend(timetable.timetable)
 
     #---------------------------
+    def get_timetable(self):
+        return self.timetable
+
+    #---------------------------
     def sort(self, field, order="ASC"):
         reverse = True if order == "DESC" else False    
         if field == "date":

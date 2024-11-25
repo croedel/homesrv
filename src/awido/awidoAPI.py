@@ -10,6 +10,7 @@ import locale
 from io import StringIO
 from datetime import datetime, timedelta
 import logging
+from homesrvmqtt.config import cfg
 
 #================================================
 class awidoAPI:
@@ -28,37 +29,45 @@ class awidoAPI:
     def __init__(self):
         self.awido_data = []
         self.refresh_date = None
-        self.region = None
-        self.oid = None
+        self.region = cfg.get("awido_region")
+        self.oid = cfg.get("awido_oid")
+        self.waste_types = cfg.get("awido_waste_types")
+        self.title = cfg.get("awido_title", "home")
         locale.setlocale(locale.LC_TIME, "de_DE")
 
     #-----------------------------------
-    def set_location(self, region, oid):
+    def set_location(self, region, oid, title=None):
         self.region = region
         self.oid = oid
+        if title:
+            self.title = title
 
     #-----------------------------------
-    def all_collections(self, waste_types=None): 
+    def set_waste_types(self, waste_types):
+        self.waste_types = waste_types
+
+    #-----------------------------------
+    def all_collections(self): 
         self._refresh_awido_data()
         now = datetime.now()
 
         collections = []
         for collection in self.awido_data:
-            if not waste_types or collection["waste_type"] in waste_types: # add future rows with matching waste_type 
+            if not self.waste_types or collection["waste_type"] in self.waste_types: # add future rows with matching waste_type 
                 item = collection.copy()
                 item["date"] = item["date"].strftime("%a %d.%m.%Y")
                 collections.append(item)
         return collections    
 
     #-----------------------------------
-    def upcoming_collections(self, waste_types=None): 
+    def upcoming_collections(self): 
         self._refresh_awido_data()
         now = datetime.now()
         today = now - timedelta(hours=now.hour, minutes=now.minute, seconds=now.second, microseconds=now.microsecond) # round to day
         
         collections = []
         for collection in self.awido_data:
-            if collection["date"] >= today and collection["date"] - now < timedelta(days=6) and (not waste_types or collection["waste_type"] in waste_types): 
+            if collection["date"] >= today and collection["date"] - now < timedelta(days=6) and (not self.waste_types or collection["waste_type"] in self.waste_types): 
                 # add future rows with matching waste_type 
                 item = collection.copy()
                 item["date"] = item["date"].strftime("%a %d.%m.%Y")
@@ -66,14 +75,14 @@ class awidoAPI:
         return collections    
 
     #-----------------------------------
-    def current_collections(self, waste_types=None): 
+    def current_collections(self): 
         self._refresh_awido_data()
         now = datetime.now()
         today = now - timedelta(hours=now.hour, minutes=now.minute, seconds=now.second, microseconds=now.microsecond) # round to day
         
         collections = []
         for collection in self.awido_data:
-            if collection["date"] >= today and collection["date"] - now < timedelta(hours=18) and (not waste_types or collection["waste_type"] in waste_types): 
+            if collection["date"] >= today and collection["date"] - now < timedelta(hours=18) and (not self.waste_types or collection["waste_type"] in self.waste_types): 
                 # add future rows with matching waste_type 
                 item = collection.copy()
                 if item["date"] <= datetime.now():

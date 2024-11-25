@@ -11,6 +11,8 @@ import signal
 from homesrvmqtt.config import cfg
 from homesrvmqtt.mqtt import mqtt_start, mqtt_stop, mqtt_publish
 from openweathermap.openweathermapAPI import openweathermapAPI
+from awido.awidoAPI import awidoAPI
+from DButils.DBtimetableAPI import DBtimetableAPI
 
 #----------------------------------
 def signal_handler(signal_number, frame):
@@ -29,17 +31,40 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
 
     logging.info("Starting")
-    api = openweathermapAPI()
     last_update = None
+    api_awido = awidoAPI()
+    api_db = DBtimetableAPI()
+    api_weather = openweathermapAPI()
   
+ 
+
+
     while run_status:
         now = datetime.now()
         if not last_update or now > last_update + timedelta(minutes=1):
             last_update = now
-            for location in api.get_locations():
+
+            # waste
+            topic = "waste/{}/current".format(api_awido.title)
+            data = api_awido.current_collections()
+            mqtt_publish(topic, data)
+            topic = "waste/{}/upcoming".format(api_awido.title)
+            data = api_awido.upcoming_collections()
+            mqtt_publish(topic, data)
+
+            # Deutsche Bahn
+            for dbstation in api_db.get_dbstations():
+                topic = "db/{}/departure/now".format(dbstation)
+                dbstation.refresh(api_db, dt=None)
+                dbtt = dbstation.get_timetable(tt_type="departure")
+                data = dbtt.get_timetable()
+                mqtt_publish(topic, data)
+
+            # weather
+            for location in api_weather.get_locations():
                 topic = "weather/{}".format(location)
-                wdata = api.get_weather(location, ['base','now'])
-                mqtt_publish(topic, wdata)
+                data = api_weather.get_weather(location, ['base','now'])
+                mqtt_publish(topic, data)
 
         time.sleep(5)
 

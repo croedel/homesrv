@@ -47,7 +47,7 @@ class DBdisruptionsAPI:
     #---------------------------
     def _refresh_disruptions(self):
         dt_now = datetime.now() 
-        if not self.disruptions_date or self.disruptions_date < dt_now-timedelta(seconds=self.cfg["REFRESH_DISRUPTIONS"]): 
+        if not self.disruptions_date or self.disruptions_date < dt_now-timedelta(seconds=self.cfg["DB_refresh_disruptions"]): 
             json = self._do_API_call()
             if json and json.get("disruptions"):
                 self.disruptions = json.get("disruptions")
@@ -67,7 +67,7 @@ class DBdisruptionsAPI:
     #---------------------------
     def _do_API_call(self):
         try:
-            url = self.cfg["DISRUPTIONS_BASE_URL"]
+            url = self.cfg["DB_disruptions_base_url"]
             response = requests.get( url, timeout=10 )
 
         except requests.exceptions.RequestException as err:

@@ -23,12 +23,14 @@ class DBtimetableAPI:
     def __init__(self):
         self.station_map = None
         self.station_map_date = None
+        self.dbstations = []
         self.headers = {
-            "DB-Api-Key": cfg.get("CLIENT_SECRET"),
-            "DB-Client-Id": cfg.get("CLIENT_ID"),
+            "DB-Api-Key": cfg.get("DB_client_secret"),
+            "DB-Client-Id": cfg.get("DB_client_id"),
             "accept": "application/xml"
         }
-
+        self._init_stations()
+        
     #---------------------------
     def search_stations_by_name(self, substring):
         self._refresh_station_map()
@@ -39,14 +41,26 @@ class DBtimetableAPI:
         return stations    
 
     #---------------------------
-    def get_station_by_id(self, station_id):
+    def get_dbstations(self):
+        return self.dbstations
+
+    #---------------------------
+    def _init_stations(self):
+        cfg_stations = cfg.get("DB_stations")
+        if cfg_stations and len(cfg_stations)>0:
+            for name, id in cfg_stations.items():
+                dbstation = self._get_station_by_id(id)
+                if dbstation:
+                    self.dbstations.append(dbstation)    
+
+    #---------------------------
+    def _get_station_by_id(self, station_id):
         self._refresh_station_map()
-        station_name = self.station_map.get(station_id)
+        station_name = self.station_map.get(str(station_id))
         if station_name:    
             return DBstation(station_id=station_id, station_name=station_name)
         else:
             logging.error( "Unknown station_id {}".format(station_id) )
-            return False
             
     #---------------------------
     def _refresh_station_map(self):
@@ -67,7 +81,7 @@ class DBtimetableAPI:
     #---------------------------
     def _do_API_call(self, path):
         try:
-            url = cfg["TIMETABLE_BASE_URL"] + path
+            url = cfg["DB_timetable_base_url"] + path
             response = requests.get( url, headers=self.headers, timeout=10 )
 
         except requests.exceptions.RequestException as err:
@@ -107,7 +121,7 @@ class DBstation:
             self.schedule_date = dt.replace(second=0, microsecond=0, minute=0) # round to hour   
 
         # refresh main schedule
-        if not self.schedule_refresh_date or self.schedule_refresh_date < dt_now-timedelta(seconds=cfg["REFRESH_SCHEDULE"]):     
+        if not self.schedule_refresh_date or self.schedule_refresh_date < dt_now-timedelta(seconds=cfg["DB_refresh_schedule"]):     
             logging.debug( "Refreshing schedule for station_id {}".format(self.station_id) )
             self.schedule.clear()      
             self._get_schedule(api, dt=dt)
@@ -115,7 +129,7 @@ class DBstation:
             self.schedule_refresh_date = dt_now
             self.change_refresh_date = None # force refresh of changes to avoid
         # refresh changes
-        if not self.change_refresh_date or self.change_refresh_date < dt_now-timedelta(seconds=cfg["REFRESH_CHANGES"]): 
+        if not self.change_refresh_date or self.change_refresh_date < dt_now-timedelta(seconds=cfg["DB_refresh_changes"]): 
             logging.debug( "Refreshing changes for station_id {}".format(self.station_id) )
             self.changes.clear()      
             self._get_changes(api)
@@ -301,16 +315,7 @@ def main():
     for name, id in stations:
         print("- {}: {}".format(id, name))
 
-    # Get Timetable for a station
-    # 8000261: München Hbf
-    # 8098261: München Hbf Gl.27-36
-    # 8098262: München Hbf Gl.5-10
-    # 8098263: München Hbf (tief)
-    # 8004158: Pasing
-    # 8006006: Germering-Unterpfaffenhofen
-
-    station = api.get_station_by_id("8004158")
-    if station:
+    for station in api.get_dbstations():
         station.refresh(api, dt=None)
         timetable = station.get_timetable(tt_type="departure")
         timetable.sort("date")
