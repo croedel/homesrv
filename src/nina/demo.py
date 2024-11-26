@@ -9,9 +9,9 @@ from nina.ninaAPI import ninaAPI
 def main():
    logging.basicConfig( level=logging.DEBUG, format="%(asctime)s : %(levelname)s : %(message)s" )
    api = ninaAPI()
-   ars, city = api.get_ars("Oberschleißheim")
-   warnings = api.get_warnings( ars )
-   print( "Warnings for ARS {}: {} ".format(ars,city) )
+#   api.set_location("Oberschleißheim")
+   warnings = api.get_warnings()
+   print( "Warnings for ARS {}: {} ".format(api.ars, api.location) )
    if warnings:
       for item in warnings:
          print( "---" )

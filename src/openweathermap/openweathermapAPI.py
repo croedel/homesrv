@@ -19,7 +19,7 @@ class openweathermapAPI:
     def __init__(self):
         self.weather = {}
         self._read_config()
-        if cfg['lang'] == 'de':
+        if cfg['weather_lang'] == 'de':
             locale.setlocale(locale.LC_ALL, "de_DE.UTF-8")     
 
     #-----------------------------------
@@ -118,7 +118,7 @@ class openweathermapAPI:
     # Helper functions
     #-----------------------------------
     def _request_openweathermap(self, lat, lon):    # get weather info from OpenWeatherMap API
-        payload = { 'lat': lat, 'lon': lon, 'units': cfg['units'], 'lang': cfg['lang'], 'appid': cfg['api_key'] } 
+        payload = { 'lat': lat, 'lon': lon, 'units': cfg['weather_units'], 'lang': cfg['weather_lang'], 'appid': cfg['weather_api_key'] } 
         try:
             response = requests.get(self.base_url, payload, timeout=3)
         except requests.exceptions.RequestException as err:
@@ -136,7 +136,7 @@ class openweathermapAPI:
         else:
             location = city 
 
-        payload = { 'q': location, 'appid': cfg['api_key'], 'limit': 1 }
+        payload = { 'q': location, 'appid': cfg['weather_api_key'], 'limit': 1 }
         try:
             response = requests.get(self.geo_url, payload, timeout=3)
         except requests.exceptions.RequestException as err:
@@ -152,13 +152,13 @@ class openweathermapAPI:
     #-----------------------------------
     def _read_config(self):
         # read api_key as mandatory entry
-        if len(cfg.get('api_key', '')) < 30:
+        if len(cfg.get('weather_api_key', '')) < 30:
             logging.fatal("Invalid api_key. Please set valid key within config.yaml")
             exit()
 
         # read locations from config file    
-        if cfg.get('locations'):
-            for name, params in cfg.get('locations').items(): 
+        if cfg.get('weather_locations'):
+            for name, params in cfg.get('weather_locations').items(): 
                 self.add_location(name=name, lat=params['lat'], lon=params['lon'], country=params.get('country'), state=params.get('state'))
 
     #===============================================================

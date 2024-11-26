@@ -38,14 +38,14 @@ def mqtt_start( api=None ):
     try: 
         client = mqttcl.Client(mqttcl.CallbackAPIVersion.VERSION2)
         client.user_data_set(api) # register API instance
-        client.username_pw_set(cfg['MQTT_LOGIN'], cfg['MQTT_PASSWORD']) 
+        client.username_pw_set(cfg['MQTT_login'], cfg['MQTT_password']) 
         client.on_connect = on_mqtt_connect
         client.on_disconnect = on_mqtt_disconnect
         client.on_message = on_mqtt_message
         client.on_subscribe = on_mqtt_subscribe
-        client.connect(cfg['MQTT_SERVER'], cfg['MQTT_PORT'], keepalive = 60) 
+        client.connect(cfg['MQTT_server'], cfg['MQTT_port'], keepalive = 60) 
         if api:
-            client.subscribe(cfg["MQTT_BASE_TOPIC"]+"/cmd", qos=0)
+            client.subscribe(cfg["MQTT_base_topic"]+"/cmd", qos=0)
             client.loop_start()
             logging.info('MQTT server started')
         return client
@@ -60,13 +60,13 @@ def mqtt_stop(client):
         logging.warning("Couldn't stop MQTT: {}".format(str(e)))
 
 def mqtt_publish(topic, payload):
-    topic = cfg["MQTT_BASE_TOPIC"] + "/" + topic
-    if cfg['MQTT_DISABLE']: # Don't do anything - just logg
+    topic = cfg["MQTT_base_topic"] + "/" + topic
+    if cfg['MQTT_disable']: # Don't do anything - just logg
         logging.info("- {}: {}".format(topic, str(payload)))
     else:  
-        auth = { 'username': cfg['MQTT_LOGIN'], 'password': cfg['MQTT_PASSWORD'] }  
+        auth = { 'username': cfg['MQTT_login'], 'password': cfg['MQTT_password'] }  
         logging.debug("- {}: {}".format(topic, str(payload)))
         try:
-            publish.single(topic, payload=payload, hostname=cfg['MQTT_SERVER'], port=cfg['MQTT_PORT'], auth=auth)
+            publish.single(topic, payload=payload, hostname=cfg['MQTT_server'], port=cfg['MQTT_port'], auth=auth)
         except Exception as e:
             logging.error("Could't send MQTT command: {}".format(str(e)))
