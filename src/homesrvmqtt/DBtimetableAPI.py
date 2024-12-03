@@ -12,7 +12,7 @@ logging.basicConfig(format=FORMAT, level=logging.INFO)
 import requests
 import xmltodict
 from homesrvmqtt.config import cfg
-from DButils.DBtimetableHelpers import DBtimetable, DBtrain_stop
+from homesrvmqtt.DBtimetableHelpers import DBtimetable, DBtrain_stop
 from datetime import datetime, timedelta
 
 

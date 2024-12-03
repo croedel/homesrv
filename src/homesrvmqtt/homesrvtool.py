@@ -4,10 +4,10 @@ command line tool for homesrv
 (c) 2024 by Christian Rödel 
 """
 
-from awido.awidoAPI import awidoAPI
-from openweathermap.openweathermapAPI import openweathermapAPI
-from DButils.DBtimetableAPI import DBtimetableAPI
-from nina.ninaAPI import ninaAPI
+from homesrvmqtt.awidoAPI import awidoAPI
+from homesrvmqtt.openweathermapAPI import openweathermapAPI
+from homesrvmqtt.DBtimetableAPI import DBtimetableAPI
+from homesrvmqtt.ninaAPI import ninaAPI
 
 #-----------------------------------
 # AWIDO

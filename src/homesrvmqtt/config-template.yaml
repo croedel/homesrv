@@ -56,8 +56,8 @@ DB_disruptions_states:
 DB_disruptions_withtxt: True
 
 DB_refresh_schedule:    1800    # refresh interval from (main) schedule [seconds]
-DB_refresh_changes:     30      # refreh interval for changes [seconds] (should be set >=30s)
-DB_refresh_disruptions: 300     # refreh interval for disruptions [seconds]
+DB_refresh_changes:     60      # refreh interval for changes [seconds] (should be set >=30s)
+DB_refresh_disruptions: 600     # refreh interval for disruptions [seconds]
 
 DB_timetable_base_url:   https://apis.deutschebahn.com/db-api-marketplace/apis/timetables/v1/
 DB_disruptions_base_url:   https://www.s-bahn-muenchen.de/.rest/verkehrsmeldungen?path=%2Faktuell
