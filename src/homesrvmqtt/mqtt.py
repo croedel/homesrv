@@ -5,7 +5,6 @@ MQTT client base implemantation
 """
 from homesrvmqtt.config import cfg
 import logging
-import time
 
 try:
     import paho.mqtt.client as mqttcl

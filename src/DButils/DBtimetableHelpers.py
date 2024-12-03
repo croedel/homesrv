@@ -175,7 +175,10 @@ class DBtrain_stop:
                 item["scheduled_platform"] = self.departure.get("platform")
             max_prio = 99
             for msg in self.messages: # choose message with highest prio
-                prio = int(msg.get("priority",99))
+                if msg.get("priority",99):
+                    prio = int(msg.get("priority",99))
+                else:
+                    prio = 99    
                 if prio < max_prio:
                     item["message"] = msg.get("category")
             return item 

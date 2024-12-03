@@ -10,9 +10,10 @@ import time
 import signal
 from homesrvmqtt.config import cfg
 from homesrvmqtt.mqtt import mqtt_start, mqtt_stop, mqtt_publish
-from openweathermap.openweathermapAPI import openweathermapAPI
 from awido.awidoAPI import awidoAPI
+from openweathermap.openweathermapAPI import openweathermapAPI
 from DButils.DBtimetableAPI import DBtimetableAPI
+from DButils.DBdisruptionsAPI import DBdisruptionsAPI
 from nina.ninaAPI import ninaAPI
 
 #----------------------------------
@@ -36,6 +37,7 @@ def main():
     api_awido = None
     api_weather = None
     api_db = None
+    api_disruptions = None
     api_nina = None
     if cfg.get("MQTT_enable_awido"):
         logging.info("Initializing awidoAPI")
@@ -43,6 +45,7 @@ def main():
     if cfg.get("MQTT_enable_db"):
         logging.info("Initializing DB API")
         api_db = DBtimetableAPI()
+        api_disruptions = DBdisruptionsAPI()
     if cfg.get("MQTT_enable_weather"):
         logging.info("Initializing openweathermapAPI")
         api_weather = openweathermapAPI()
@@ -80,6 +83,8 @@ def main():
                     dbtt = dbstation.get_timetable(tt_type="departure")
                     data = dbtt.get_timetable()
                     mqtt_publish(topic, data)
+                data = api_disruptions.get_disruptions()
+                mqtt_publish(topic, data)
 
             # weather
             if api_weather:

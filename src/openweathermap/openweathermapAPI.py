@@ -37,8 +37,9 @@ class openweathermapAPI:
     #-----------------------------------
     # add a location by searching for a name; lat and lon will be retrieved using a geo-location service 
     def add_location_by_name(self, city, country=None):
-        loc = self._search_location(city, country)
-        if loc:
+        locations = self._search_location(city, country)
+        if locations:
+            loc = locations[0]  # take first one
             self.weather[loc["name"]] = {
                 "country": loc.get("country",""),
                 "state": loc.get("state",""),
@@ -114,6 +115,25 @@ class openweathermapAPI:
         else:    
             logging.error( "Undefined location: {}".format(location) )
 
+
+    #-----------------------------------
+    def search_location(self, city, country=None):
+        locations = self._search_location(city, country, 10)
+        if locations:
+            result = []
+            for loc in locations:
+                data = {}
+                data["name"] = loc.get("name","")
+                data["country"] = loc.get("country","")
+                data["state"] = loc.get("state","")
+                data["lat"] = loc["lat"]
+                data["lon"] = loc["lon"]
+                result.append(data)
+            return result
+        else:
+            logging.error( "Location not found :-(" ) 
+
+
     #-----------------------------------
     # Helper functions
     #-----------------------------------
@@ -130,13 +150,13 @@ class openweathermapAPI:
                 logging.error( "Error while requesting openweathermap API: {:s} -> {:d} {:s}".format( str(payload), response.status_code, response.reason) )
 
     #-----------------------------------
-    def _search_location(self, city, country=None):
+    def _search_location(self, city, country=None, limit=1):
         if country:
             location = "{},{}".format(city, country) 
         else:
             location = city 
 
-        payload = { 'q': location, 'appid': cfg['weather_api_key'], 'limit': 1 }
+        payload = { 'q': location, 'appid': cfg['weather_api_key'], 'limit': limit }
         try:
             response = requests.get(self.geo_url, payload, timeout=3)
         except requests.exceptions.RequestException as err:
@@ -145,7 +165,7 @@ class openweathermapAPI:
             if response.status_code == 200:
                 json = response.json()
                 if json:
-                    return json[0]
+                    return json
             else:
                 logging.error( "Error while requesting openweathermap API: {:s} -> {:d} {:s}".format( str(payload), response.status_code, response.reason) )
 

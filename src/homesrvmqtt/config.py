@@ -5,8 +5,35 @@ read config.yaml file
 """
 
 import os
+import sys
 import yaml
 import logging
+
+#----------------------------------------
+# Create new config file
+def create_config_file():
+    print("Creating config.yaml")
+
+    # Read template 
+    try:
+        BASE_DIR = os.path.dirname(__file__) # Base installation directory
+        templ_fname = os.path.join(BASE_DIR, "config-template.yaml")
+        with open(templ_fname, "r") as file: 
+            data = file.read()   
+    except Exception as ex:
+        print("ERROR - Couldn't read 'config-template.yaml': {}".format(ex))
+        return False
+
+    try:
+        os.makedirs(os.path.dirname(cfg_fname), exist_ok=True)
+        with open(cfg_fname, "w") as file: 
+            file.write(data) 
+    except Exception as ex:
+        logging.error("ERROR - Couldn't write {}: {}".format(cfg_fname, ex))
+        return False
+
+    logging.info("Successfully created {}".format(cfg_fname))
+    return True
 
 #-----------------------------------
 # Read configuration from YAML file
@@ -36,6 +63,16 @@ def read_config():
 #-----------------------------------
 logging.basicConfig( level=logging.INFO, format="[%(levelname)s] %(filename)s: %(message)s" )
 cfg = read_config()
+if not cfg:
+  if create_config_file():  # Create a new config
+    cfg = read_config()
+    if not cfg:
+      logging.fatal("Couldn't open config YAML file")
+      sys.exit(1)
+  else:
+    logging.fatal("Couldn't create config YAML file")
+    sys.exit(1)
+
 
 #--------------------------------------
 # Test code only

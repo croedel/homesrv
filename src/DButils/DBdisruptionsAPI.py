@@ -5,13 +5,7 @@ DBdisruptions main class
 """
 
 import logging
-#FORMAT = '%(asctime)s [%(levelname)s] %(message)s'
-FORMAT = '[%(levelname)s] %(message)s'
-logging.basicConfig(format=FORMAT, level=logging.INFO)
-
-import os
-import yaml
-import sys
+from homesrvmqtt.config import cfg
 import requests
 from datetime import datetime, timedelta
 
@@ -23,10 +17,14 @@ class DBdisruptionsAPI:
     def __init__(self):
         self.disruptions = None
         self.disruptions_date = None
-        self._read_config() # read config.yaml
 
     #---------------------------
-    def get_disruptions(self, authors=None, states=None):
+    def get_disruptions(self):
+        disruptions = self._get_disruptions( authors=cfg["DB_disruptions_authors"], states=cfg["DB_disruptions_states"], withtxt=cfg["DB_disruptions_withtxt"] )
+        return disruptions.disruptions
+    
+    #---------------------------
+    def _get_disruptions(self, authors=None, states=None, withtxt=True):
         self._refresh_disruptions()
         disruptions = DBdisruptions()
         for item in self.disruptions:
@@ -41,33 +39,25 @@ class DBdisruptionsAPI:
                         found = True
                 if not found:
                     continue
+            if withtxt == False:
+                if item.get("text"):
+                    del item["text"]    
             disruptions.append(item)
         return disruptions
             
     #---------------------------
     def _refresh_disruptions(self):
         dt_now = datetime.now() 
-        if not self.disruptions_date or self.disruptions_date < dt_now-timedelta(seconds=self.cfg["DB_refresh_disruptions"]): 
+        if not self.disruptions_date or self.disruptions_date < dt_now-timedelta(seconds=cfg["DB_refresh_disruptions"]): 
             json = self._do_API_call()
             if json and json.get("disruptions"):
                 self.disruptions = json.get("disruptions")
                 self.disruptions_date = dt_now
 
     #---------------------------
-    def _read_config(self):
-        base_dir = os.path.dirname(__file__) # Base installation directory
-        try:
-            fname = os.path.join(base_dir, "config.yaml")
-            with open(fname, 'r', encoding='utf-8') as myfile:
-                self.cfg = yaml.safe_load(myfile)
-        except yaml.YAMLError as err:
-            logging.error("Couldn't read config file {}: {}".format(fname, str(err)) )
-            sys.exit("Couldn't read config file")
-
-    #---------------------------
     def _do_API_call(self):
         try:
-            url = self.cfg["DB_disruptions_base_url"]
+            url = cfg["DB_disruptions_base_url"]
             response = requests.get( url, timeout=10 )
 
         except requests.exceptions.RequestException as err:
