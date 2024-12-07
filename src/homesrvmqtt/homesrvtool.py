@@ -65,12 +65,24 @@ def search_location(api: openweathermapAPI):
     else:
         print("Couldn't find location")    
 
+#--------------------------------
+# openweathermap
+def search_ars(api: ninaAPI):
+    location = input("location name you want to search: ")
+    data = api.search_location(location)
+    if data:
+        for item in data:
+           print("- {}: {}".format(item["location"], item["ars"]))
+    else:
+        print("Couldn't find location")    
+
 
 #================================================
 def main(): 
     awido_api = awidoAPI()
     db_api = DBtimetableAPI()
     weather_api = openweathermapAPI()
+    nina_api = ninaAPI()
 
     while True:
         print( "=====================================" )
@@ -78,6 +90,7 @@ def main():
         print( "  1: AWIDO: Find your OID" )
         print( "  2: Deutsche Bahn: Find stations and station_id's" )
         print( "  3: Openweathermap: Find geo location" )
+        print( "  4: nina: Find location ars" )
         print( "  x: Exit" )
 
         opt = input("Please select: ")
@@ -87,6 +100,8 @@ def main():
             search_dbstation(db_api)
         elif opt == "3": 
             search_location(weather_api)
+        elif opt == "4": 
+            search_ars(nina_api)
         elif opt == "x" or opt == "X":  
             break
     

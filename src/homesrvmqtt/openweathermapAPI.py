@@ -82,15 +82,14 @@ class openweathermapAPI:
         return txt    
 
     #------------------------------------------------------------------        
-    def get_weather(self, location, filter=None):
+    def get_weather(self, location, categogy=None):
         self.refresh_location(location)
         wdata = self._prettify_weather(location)
-        if filter:
+        if categogy:
             ret = {}
             for k, v in wdata.items():
-                if k in filter:
-                    ret[k] = v
-            return ret    
+                if k == categogy:
+                    return v    
         else:
             return wdata
 
@@ -394,7 +393,7 @@ class openweathermapAPI:
                             prec_array.append(self._precipitation2str(item.get('precipitation', 0), text=False))
                             if precipitation and item.get('precipitation') == 0:
                                 prec_stop_t = datetime.fromtimestamp(item.get('dt'))
-                                prec_msg = cfg['prec_forecast']['prec_stops'].format(prec_stop_t.strftime('%H:%M')) 
+                                prec_msg = cfg['prec_forecast']['prec_ends'].format(prec_stop_t.strftime('%H:%M')) 
                             elif not precipitation and item.get('precipitation') > 0:
                                 prec_start_t = datetime.fromtimestamp(item.get('dt'))
                                 prec_msg = cfg['prec_forecast']['prec_starts'].format(prec_start_t.strftime('%H:%M')) 

@@ -113,12 +113,12 @@ class DBstation:
     def refresh(self, api: DBtimetableAPI, dt: datetime=None):
         dt_now = datetime.now() 
         if not dt:
-            dt = dt_now
+            dt = dt_now.replace(second=0, microsecond=0, minute=0) # round to hour
 
         if dt != self.schedule_date: # refresh requested for a different date than previously -> force a refresh
             self.schedule_refresh_date = None
             self.change_refresh_date = None
-            self.schedule_date = dt.replace(second=0, microsecond=0, minute=0) # round to hour   
+            self.schedule_date = dt   
 
         # refresh main schedule
         if not self.schedule_refresh_date or self.schedule_refresh_date < dt_now-timedelta(seconds=cfg["DB_refresh_schedule"]):     
@@ -149,6 +149,13 @@ class DBstation:
             if item:
                 timetable.append(item)    
         return timetable
+
+    #---------------------------
+    def get_station_base_data(self):
+        data = {}
+        data["station_id"] = self.station_id
+        data["station_name"] = self.station_name
+        return data
 
     #---------------------------
     def print(self):

@@ -66,20 +66,106 @@ sudo systemctl status homesrv_mqtt
 ### Configuration 
 
 The installer will create a `config.yaml` file in the default location of your OS.
-For a Linux system it's probably `~/.config/mtecmqtt/config.yaml`, on Windowns something like `C:\Users\xxxxx\AppData\Roaming\config.yaml`
+For a Linux system it's probably `~/.config/homesrv_mqtt/config.yaml`, on Windowns something like `C:\Users\xxxxx\AppData\Roaming\config.yaml`
 
+The config file contains sections for the different data sources:
 
+* MQTT settings: General settings for MQTT server and to define which data sources / integrations shall be activated
+* awido waste
+* Deutsche Bahn
+* Nina
+* Openweathermap
 
+#### MQTT settings
+In order to enable access to your MQTT server, you need to provide `MQTT_server` and `MQTT_port`.
+If your MQTT server is set up with authentification, specify your credentials in `MQTT_login` and `MQTT_password`.
 
-## Data sources / APIs
+`homesrv`will write the data as subtopics of `MQTT_base_topic`.
+The data will be written / refreshed every `MQTT_refesh` seconds. 
 
-### awido
+```
+MQTT_server:                # MQTT server name or IP
+MQTT_port:                  # MQTT server port
+MQTT_login:                 # MQTT server login
+MQTT_password:              # MQTT server password
+MQTT_base_topic: homesrv    # base topic
+MQTT_disable:   True        # Disable writing to MQTT server - can be set to True for Debug purposes
 
-### Deutsche Bahn (DButils)
+MQTT_refesh:    300         # refresh info every N seconds
 
-### nina
-This project offers a (hopefully) user-friendly API to the NINA API https://nina.api.bund.dev/ and allows you to retrieve warning messages for your home location.
+```
 
-### openweathermap
+To enable / disable the different integrations, use following config entries:
+
+```
+# enable / disable integrations
+MQTT_enable_awido:   True
+MQTT_enable_db:      True
+MQTT_enable_weather: True
+MQTT_enable_nina:    True
+```
+
+#### awido waste
+
+```
+awido_region: ffb       # put your region code here
+awido_title: Zuhause    # choose a title 
+awido_oid: xxxxxxxxxxxx     # put your oid here 
+awido_waste_types:                                  # restrict the data to the listed waste types
+    - "Bioabfall"
+    - "Restmülltonne 40-240 L"
+    - "Papiertonne 4-wöchentlich"
+    - "Wertstofftonne 80-1100 L"
+#    - "Papiercontainer 2-wöchentlich"
+#    - "Restmüllcontainer 660-1100 L"
+    - "Problemmüll"
+```
+
+#### DButils
+
+```
+DB_client_id:      xxxxxx     # put you DB client id here
+DB_client_secret:  xxxxxx     # put you DB client secret here
+
+DB_stations:
+    Pasing: 8004158            # list at least one station, using the format <Name>: <StationId>                 
+#    München Hbf: 8000261
+#    München Hbf Gl.27-36: 8098261
+#    München Hbf Gl.5-10: 8098262
+#    München Hbf (tief): 8098263
+
+# Filter disruptions
+DB_disruptions_authors:
+DB_disruptions_states: 
+    - BY
+    - BW
+DB_disruptions_withtxt: True
+
+DB_refresh_schedule:    1800    # refresh interval from (main) schedule [seconds]
+DB_refresh_changes:     60      # refreh interval for changes [seconds] (should be set >=30s)
+DB_refresh_disruptions: 600     # refreh interval for disruptions [seconds]
+
+DB_timetable_base_url:   https://apis.deutschebahn.com/db-api-marketplace/apis/timetables/v1/
+DB_disruptions_base_url:   https://www.s-bahn-muenchen.de/.rest/verkehrsmeldungen?path=%2Faktuell
+```
+
+#### NINA
+
+```
+nina_location: xxxxxx    # Name of you city / location
+```
+
+#### openweathermap settings
+
+```
+weather_api_key: xxxxxx   # put your openweathermap api key here 
+weather_lang:    de
+weather_units:   metric
+
+weather_locations:  # you can specify you locations here
+    Mycity:          
+        lat: 22.2222222
+        lon: 11.1111111
+```
 
 

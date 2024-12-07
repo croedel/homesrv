@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-homesrv
+homesrv - server daemon which retrieves data from configured data sources and writes the data to you MQTT server 
 (c) 2024 by Christian Rödel 
 """
 
@@ -62,9 +62,10 @@ def main():
 
             # nina
             if api_nina:
-                topic = "nina/{}".format(api_nina.ars)
-                data = api_nina.get_warnings()
-                mqtt_publish(topic, data)
+                for location in api_nina.locations:
+                    topic = "nina/{}".format(location["ars"])
+                    data = api_nina.get_warnings(ars=location["ars"])     
+                    mqtt_publish(topic, data)
 
             # waste
             if api_awido:
@@ -78,11 +79,16 @@ def main():
             # Deutsche Bahn
             if api_db:
                 for dbstation in api_db.get_dbstations():
-                    topic = "db/{}/departure/now".format(dbstation)
+                    topic = "db/{}".format(dbstation.station_id)
+                    data = dbstation.get_station_base_data() 
+                    mqtt_publish(topic, data)
+                    topic = "db/{}/departure".format(dbstation.station_id)
                     dbstation.refresh(api_db, dt=None)
                     dbtt = dbstation.get_timetable(tt_type="departure")
                     data = dbtt.get_timetable()
                     mqtt_publish(topic, data)
+
+                topic = "db/disruptions"
                 data = api_disruptions.get_disruptions()
                 mqtt_publish(topic, data)
 
@@ -90,7 +96,16 @@ def main():
             if api_weather:
                 for location in api_weather.get_locations():
                     topic = "weather/{}".format(location)
-                    data = api_weather.get_weather(location, ['base','now'])
+                    data = api_weather.get_weather(location, 'base')
+                    mqtt_publish(topic, data)
+                    topic = "weather/{}/now".format(location)
+                    data = api_weather.get_weather(location, 'now')
+                    mqtt_publish(topic, data)
+                    topic = "weather/{}/daytime".format(location)
+                    data = api_weather.get_weather(location, 'daytime')
+                    mqtt_publish(topic, data)
+                    topic = "weather/{}/daily".format(location)
+                    data = api_weather.get_weather(location, 'daily')
                     mqtt_publish(topic, data)
 
         time.sleep(10)
