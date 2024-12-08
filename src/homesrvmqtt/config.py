@@ -12,7 +12,7 @@ import logging
 #----------------------------------------
 # Create new config file
 def create_config_file():
-    print("Creating config.yaml")
+    logging.debug("Creating config file")
 
     # Read template 
     try:
@@ -23,6 +23,13 @@ def create_config_file():
     except Exception as ex:
         print("ERROR - Couldn't read 'config-template.yaml': {}".format(ex))
         return False
+
+    # Write customized config
+    cfg_path = os.environ.get('XDG_CONFIG_HOME') or os.environ.get('APPDATA')
+    if cfg_path: # Usually something like ~/.config/mtecmqtt/config.yaml resp. 'C:\\Users\\xxxx\\AppData\\Roaming'
+        cfg_fname = os.path.join(cfg_path, "mtecmqtt", "config.yaml")  
+    else:
+        cfg_fname = os.path.join(os.path.expanduser("~"), ".config", "mtecmqtt", "config.yaml")  # ~/.config/mtecmqtt/config.yaml
 
     try:
         os.makedirs(os.path.dirname(cfg_fname), exist_ok=True)
@@ -77,4 +84,4 @@ if not cfg:
 #--------------------------------------
 # Test code only
 if __name__ == "__main__":
-    logging.info( "Config: {}".format( str(cfg)) )
+    print()
