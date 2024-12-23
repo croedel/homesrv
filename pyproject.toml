@@ -38,4 +38,4 @@ script-files = ["src/install_systemd_service.sh"]
 version = {attr = "homesrvmqtt.__version__"}
 
 [tool.setuptools.package-data]
-mtecmqtt = ["*.yaml"]
+homesrvmqtt = ["*.yaml"]
