@@ -7,6 +7,7 @@ name = "homesrv_mqtt"
 description = "Retrieves data from several public available sources and adds them to your MQTT server"
 dependencies = [
   "pyyaml", 
+  "requests",
   "paho-mqtt >= 2.0", 
 ]  
 requires-python = ">=3.8"
