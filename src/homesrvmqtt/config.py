@@ -74,13 +74,12 @@ if not cfg:
   logging.info("No config.yaml found - creating new one from template.")
   if create_config_file():  # Create a new config
     cfg = read_config()
-    if cfg:
-      logging.info("Please edit and adapt config.yaml to your needs and then restart.")
-      sys.exit(0)
-    else:  
+    if not cfg:
       logging.fatal("Couldn't open fresh created config YAML file")
       sys.exit(1)
-      
+    else:
+      logging.warning("Please edit and adapt freshly created config.yaml. Restart afterwards.")
+      sys.exit(0)      
   else:
     logging.fatal("Couldn't create config YAML file from templare")
     sys.exit(1)
