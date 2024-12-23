@@ -33,7 +33,7 @@ class awidoAPI:
         self.oid = cfg.get("awido_oid")
         self.waste_types = cfg.get("awido_waste_types")
         self.title = cfg.get("awido_title", "home")
-        locale.setlocale(locale.LC_TIME, "de_DE")
+        locale.setlocale(locale.LC_ALL, "")
 
     #-----------------------------------
     def set_location(self, region, oid, title=None):

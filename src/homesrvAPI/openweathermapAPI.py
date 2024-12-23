@@ -19,8 +19,7 @@ class openweathermapAPI:
     def __init__(self):
         self.weather = {}
         self._read_config()
-        if cfg['weather_lang'] == 'de':
-            locale.setlocale(locale.LC_ALL, "de_DE.UTF-8")     
+        locale.setlocale(locale.LC_ALL, "")     
 
     #-----------------------------------
     # add a location by specifying lat an lon coordinates
