@@ -63,9 +63,9 @@ class DBtimetable:
         txt = ""
         item = {}         
         for item in self.timetable:
-            time = item["date"].strftime("%H:%M")
+            time = item["date"]
             if item.get("scheduled_date"):    
-                time = "{} [{}]".format(time, item["scheduled_date"].strftime("%H:%M"))
+                time = "{} [{}]".format(time, item["scheduled_date"])
             platform = item.get("platform")
             if item.get("scheduled_platform"):
                 platform = "{} [{}]".format(platform, item["scheduled_platform"])         

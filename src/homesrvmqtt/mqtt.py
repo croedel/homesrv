@@ -4,6 +4,7 @@ MQTT client base implemantation
 (c) 2024 by Christian Rödel 
 """
 from homesrvmqtt.config import cfg
+import json
 import logging
 
 try:
@@ -59,15 +60,17 @@ def mqtt_stop(client):
     except Exception as e:
         logging.warning("Couldn't stop MQTT: {}".format(str(e)))
 
-def mqtt_publish(topic, payload):
+def mqtt_publish(topic, data):
     topic = cfg["MQTT_base_topic"] + "/" + topic
+    if isinstance(data, (dict, list)):
+        payload = json.dumps(data)
     if cfg['MQTT_disable']: # Don't do anything - just logg
-        logging.info("- {}: {}".format(topic, str(payload)))
+        logging.info("- {}: {}".format(topic, payload))
     else:  
         auth = None
         if cfg['MQTT_login']:
             auth = { 'username': cfg['MQTT_login'], 'password': cfg['MQTT_password'] }  
-        logging.debug("- {}: {}".format(topic, str(payload)))
+        logging.debug("- {}: {}".format(topic, payload))
         try:
             publish.single(topic, payload=payload, hostname=cfg['MQTT_server'], port=cfg['MQTT_port'], auth=auth)
         except Exception as e:

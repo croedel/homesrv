@@ -144,7 +144,7 @@ class DBstation:
             if tt_type == "arrival":
                 item = schedule_item.get_arrival()
             elif tt_type == "departure":   
-                if schedule_item.departure.get("time") and schedule_item.departure["time"] >= now-timedelta(minutes=1):
+                if schedule_item.departure.get("time") and datetime.strptime(schedule_item.departure["time"], "%d.%m.%Y %H:%M") >= now-timedelta(minutes=1):
                     item = schedule_item.get_departure()
             if item:
                 timetable.append(item)    
@@ -217,7 +217,7 @@ class DBstation:
                     train.base["trip_type"] = item["tl"].get("@t")  
 
                 if item.get("ar"):               
-                    train.arrival["time"] = datetime.strptime(item["ar"].get("@pt"), "%y%m%d%H%M")
+                    train.arrival["time"] = datetime.strptime(item["ar"].get("@pt"), "%y%m%d%H%M").strftime("%d.%m.%Y %H:%M")
                     train.arrival["platform"] = item["ar"].get("@pp")
                     train.arrival["line"] = item["ar"].get("@l")
                     train.arrival["path"] = item["ar"].get("@ppth")
@@ -227,7 +227,7 @@ class DBstation:
                         train.arrival["from"] = train.arrival["path"]
 
                 if item.get("dp"):               
-                    train.departure["time"] = datetime.strptime(item["dp"].get("@pt"), "%y%m%d%H%M")
+                    train.departure["time"] = datetime.strptime(item["dp"].get("@pt"), "%y%m%d%H%M").strftime("%d.%m.%Y %H:%M")
                     train.departure["platform"] = item["dp"].get("@pp")
                     train.departure["line"] = item["dp"].get("@l")
                     train.departure["path"] = item["dp"].get("@ppth")
@@ -256,7 +256,7 @@ class DBstation:
 
                 if item.get("ar"):     
                     if item["ar"].get("@ct"):
-                        train.arrival["changed_time"] = datetime.strptime(item["ar"].get("@ct"), "%y%m%d%H%M")          
+                        train.arrival["changed_time"] = datetime.strptime(item["ar"].get("@ct"), "%y%m%d%H%M").strftime("%d.%m.%Y %H:%M")          
                     train.arrival["change_status"] = item["ar"].get("@cs")
                     train.arrival["changed_platform"] = item["ar"].get("@cp")
                     train.arrival["changed_path"] = item["ar"].get("@cpth")
@@ -268,7 +268,7 @@ class DBstation:
 
                 if item.get("dp"):
                     if item["dp"].get("@ct"):
-                        train.departure["changed_time"] = datetime.strptime(item["dp"].get("@ct"), "%y%m%d%H%M")          
+                        train.departure["changed_time"] = datetime.strptime(item["dp"].get("@ct"), "%y%m%d%H%M").strftime("%d.%m.%Y %H:%M")          
                     train.departure["change_status"] = item["dp"].get("@cs")
                     train.departure["changed_platform"] = item["dp"].get("@cp")
                     train.departure["changed_path"] = item["dp"].get("@cpth")
