@@ -71,13 +71,18 @@ def read_config():
 logging.basicConfig( level=logging.INFO, format="[%(levelname)s] %(filename)s: %(message)s" )
 cfg = read_config()
 if not cfg:
+  logging.info("No config.yaml found - creating new one from template.")
   if create_config_file():  # Create a new config
     cfg = read_config()
-    if not cfg:
-      logging.fatal("Couldn't open config YAML file")
+    if cfg:
+      logging.info("Please edit and adapt config.yaml to your needs and then restart.")
+      sys.exit(0)
+    else:  
+      logging.fatal("Couldn't open fresh created config YAML file")
       sys.exit(1)
+      
   else:
-    logging.fatal("Couldn't create config YAML file")
+    logging.fatal("Couldn't create config YAML file from templare")
     sys.exit(1)
 
 

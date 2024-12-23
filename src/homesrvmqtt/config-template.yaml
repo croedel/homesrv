@@ -3,12 +3,12 @@
 #-------------------------------------------------
 # MQTT setting
 
-MQTT_server:                # MQTT server name or IP
-MQTT_port:                  # MQTT server port
+MQTT_server: localhost      # MQTT server name or IP
+MQTT_port: 1883             # MQTT server port
 MQTT_login:                 # MQTT server login
 MQTT_password:              # MQTT server password
 MQTT_base_topic: homesrv    # base topic
-MQTT_disable:   True        # Disable writing to MQTT server - can be set to True for Debug purposes
+MQTT_disable:   False        # Disable writing to MQTT server - can be set to True for Debug purposes
 
 MQTT_refesh:    300         # refresh info every N seconds
 

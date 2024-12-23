@@ -37,7 +37,8 @@ def mqtt_start( api=None ):
     try: 
         client = mqttcl.Client(mqttcl.CallbackAPIVersion.VERSION2)
         client.user_data_set(api) # register API instance
-        client.username_pw_set(cfg['MQTT_login'], cfg['MQTT_password']) 
+        if cfg['MQTT_login']:
+            client.username_pw_set(cfg['MQTT_login'], cfg['MQTT_password']) 
         client.on_connect = on_mqtt_connect
         client.on_disconnect = on_mqtt_disconnect
         client.on_message = on_mqtt_message
