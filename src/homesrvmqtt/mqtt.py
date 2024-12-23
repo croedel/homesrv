@@ -64,7 +64,9 @@ def mqtt_publish(topic, payload):
     if cfg['MQTT_disable']: # Don't do anything - just logg
         logging.info("- {}: {}".format(topic, str(payload)))
     else:  
-        auth = { 'username': cfg['MQTT_login'], 'password': cfg['MQTT_password'] }  
+        auth = None
+        if cfg['MQTT_login']:
+            auth = { 'username': cfg['MQTT_login'], 'password': cfg['MQTT_password'] }  
         logging.debug("- {}: {}".format(topic, str(payload)))
         try:
             publish.single(topic, payload=payload, hostname=cfg['MQTT_server'], port=cfg['MQTT_port'], auth=auth)
