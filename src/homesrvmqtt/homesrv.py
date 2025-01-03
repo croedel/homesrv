@@ -58,7 +58,7 @@ def main():
         now = datetime.now()
         if not last_update or now > last_update + timedelta(seconds=cfg.get("MQTT_refresh", 300)):
             last_update = now
-            logging.debug("Refreshing MQTT data")
+            logging.info("Refreshing data")
 
             # nina
             if api_nina:

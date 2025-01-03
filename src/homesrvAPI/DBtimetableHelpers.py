@@ -31,7 +31,7 @@ class DBtimetable:
         return self.timetable
 
     #---------------------------
-    def sort(self, field, order="ASC"):
+    def sort(self, field="date", order="ASC"):
         reverse = True if order == "DESC" else False    
         if field == "date":
             self.timetable.sort(key=lambda k : k["date"], reverse=reverse)

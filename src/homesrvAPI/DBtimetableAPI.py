@@ -148,14 +148,8 @@ class DBstation:
                     item = schedule_item.get_departure()
             if item:
                 timetable.append(item)    
+        timetable.sort()        
         return timetable
-
-    #---------------------------
-    def get_station_base_data(self):
-        data = {}
-        data["station_id"] = self.station_id
-        data["station_name"] = self.station_name
-        return data
 
     #---------------------------
     def print(self):
