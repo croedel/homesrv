@@ -10,7 +10,7 @@ import locale
 from io import StringIO
 from datetime import datetime, timedelta
 import logging
-from homesrvmqtt.config import cfg
+from homesrv.config import cfg
 
 #================================================
 class awidoAPI:

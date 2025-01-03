@@ -3,7 +3,7 @@
 MQTT client base implemantation
 (c) 2024 by Christian Rödel 
 """
-from homesrvmqtt.config import cfg
+from homesrv.config import cfg
 import json
 import logging
 

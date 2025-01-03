@@ -5,6 +5,7 @@ __pycache__/
 
 # Private config file
 /config.yaml
+homesrv.html
 
 # others
 .vscode/launch.json

@@ -11,7 +11,7 @@ logging.basicConfig(format=FORMAT, level=logging.INFO)
 
 import requests
 import xmltodict
-from homesrvmqtt.config import cfg
+from homesrv.config import cfg
 from homesrvAPI.DBtimetableHelpers import DBtimetable, DBtrain_stop
 from datetime import datetime, timedelta
 

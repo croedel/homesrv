@@ -8,8 +8,8 @@ from datetime import datetime, timedelta
 import logging
 import time
 import signal
-from homesrvmqtt.config import cfg
-from homesrvmqtt.mqtt import mqtt_start, mqtt_stop, mqtt_publish
+from homesrv.config import cfg
+from homesrv.mqtt import mqtt_start, mqtt_stop, mqtt_publish
 from homesrvAPI.awidoAPI import awidoAPI
 from homesrvAPI.openweathermapAPI import openweathermapAPI
 from homesrvAPI.DBtimetableAPI import DBtimetableAPI

@@ -11,7 +11,7 @@ import time
 import signal
 import os
 import html
-from homesrvmqtt.config import cfg
+from homesrv.config import cfg
 from homesrvAPI.awidoAPI import awidoAPI
 from homesrvAPI.openweathermapAPI import openweathermapAPI
 from homesrvAPI.DBtimetableAPI import DBtimetableAPI
@@ -43,24 +43,11 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
                 
     last_update = None
-    api_awido = None
-    api_weather = None
-    api_db = None
-    api_disruptions = None
-    api_nina = None
-    if cfg.get("MQTT_enable_awido"):
-        logging.info("Initializing awidoAPI")
-        api_awido = awidoAPI()
-    if cfg.get("MQTT_enable_db"):
-        logging.info("Initializing DB API")
-        api_db = DBtimetableAPI()
-        api_disruptions = DBdisruptionsAPI()
-    if cfg.get("MQTT_enable_weather"):
-        logging.info("Initializing openweathermapAPI")
-        api_weather = openweathermapAPI()
-    if cfg.get("MQTT_enable_nina"):
-        logging.info("Initializing ninaAPI")
-        api_nina = ninaAPI()
+    api_awido = awidoAPI()
+    api_db = DBtimetableAPI()
+    api_disruptions = DBdisruptionsAPI()
+#    api_weather = openweathermapAPI()
+    api_nina = ninaAPI()
   
     logging.info("Entering the run loop")
     while run_status:
@@ -184,23 +171,6 @@ def main():
     logging.info("Exiting")
 
 '''
-
-            # Deutsche Bahn
-            if api_db:
-                for dbstation in api_db.get_dbstations():
-                    topic = "db/{}".format(dbstation.station_id)
-                    data = dbstation.get_station_base_data() 
-
-                    topic = "db/{}/departure".format(dbstation.station_id)
-                    dbstation.refresh(api_db, dt=None)
-                    dbtt = dbstation.get_timetable(tt_type="departure")
-                    data = dbtt.get_timetable()
-
-
-                topic = "db/disruptions"
-                data = api_disruptions.get_disruptions()
-
-
             # weather
             if api_weather:
                 for location in api_weather.get_locations():
@@ -233,6 +203,7 @@ def read_html_template():
 #-------------------------------------------
 def write_html_file(html_data):
     html_path = os.path.dirname(__file__) # Base installation directory
+#    html_path = cfg["HTML_DIR"]     # HTML directory
     fname = os.path.join(html_path, "homesrv.html")  
  
     try:

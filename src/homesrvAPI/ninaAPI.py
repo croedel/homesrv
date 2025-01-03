@@ -4,7 +4,7 @@ Retrieve NINA warnings
 
 import requests
 import logging
-from homesrvmqtt.config import cfg
+from homesrv.config import cfg
 
 #================================================
 class ninaAPI:

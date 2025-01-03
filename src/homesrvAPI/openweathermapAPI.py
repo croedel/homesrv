@@ -4,7 +4,7 @@ API class which retrieves data from openweathermap.org
 (c) 2024 by Christian Rödel 
 """
 
-from homesrvmqtt.config import cfg
+from homesrv.config import cfg
 import requests
 import locale
 from datetime import datetime, timedelta

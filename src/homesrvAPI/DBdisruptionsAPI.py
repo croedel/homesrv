@@ -5,7 +5,7 @@ DBdisruptions main class
 """
 
 import logging
-from homesrvmqtt.config import cfg
+from homesrv.config import cfg
 import requests
 from datetime import datetime, timedelta
 
