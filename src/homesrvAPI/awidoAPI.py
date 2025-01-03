@@ -67,7 +67,7 @@ class awidoAPI:
         
         collections = []
         for collection in self.awido_data:
-            if collection["date"] >= today and collection["date"] - now < timedelta(days=6) and (not self.waste_types or collection["waste_type"] in self.waste_types): 
+            if collection["date"] >= today and collection["date"] - now < timedelta(days=cfg["awido_recent_days"]) and (not self.waste_types or collection["waste_type"] in self.waste_types): 
                 # add future rows with matching waste_type 
                 item = collection.copy()
                 item["date"] = item["date"].strftime("%a %d.%m.%Y")

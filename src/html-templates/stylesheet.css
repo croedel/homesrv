@@ -6,6 +6,10 @@ body {
     margin: 8px 18px 8px 18px;
 }
 
+p {
+    margin: 6px 0px 6px 0px;    
+}
+
 h1 { 
     color: lightsalmon;
     font-size: 1.6em; 
@@ -94,6 +98,16 @@ details[open] > summary {
     margin: 24px 6px 18px 6px;
 }
 
+.nina {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.nina-location {
+    margin: 2px 10px 6px 2px; 
+    min-width: 400px;    
+}
+
 .nina-warning {
     border: 2px solid rgb(206, 5, 5);
     background: darkred;
@@ -111,10 +125,20 @@ details[open] > summary {
     font-weight: bold;        
 }  
 
+.db {
+    display: flex;    
+    flex-wrap: wrap;
+}
+
+.db-location {
+    margin: 2px 10px 6px 2px;    
+    min-width: 400px;    
+}
+
 .db-disruption  {
     border: 2px solid grey;
     padding: 6px;
-    margin: 6px 24px 12px 6px;    
+    margin: 6px 6px 12px 0px;    
     background: rgb(5, 47, 81);
 }
 
