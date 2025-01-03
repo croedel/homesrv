@@ -122,7 +122,7 @@ class DBstation:
 
         # refresh main schedule
         if not self.schedule_refresh_date or self.schedule_refresh_date < dt_now-timedelta(seconds=cfg["DB_refresh_schedule"]):     
-            logging.debug( "Refreshing schedule for station_id {}".format(self.station_id) )
+            logging.info( "Refreshing schedule for station_id {}".format(self.station_id) )
             self.schedule.clear()      
             self._get_schedule(api, dt=dt)
             self._get_schedule(api, dt=dt+timedelta(hours=1))
@@ -130,7 +130,7 @@ class DBstation:
             self.change_refresh_date = None # force refresh of changes to avoid
         # refresh changes
         if not self.change_refresh_date or self.change_refresh_date < dt_now-timedelta(seconds=cfg["DB_refresh_changes"]): 
-            logging.debug( "Refreshing changes for station_id {}".format(self.station_id) )
+            logging.info( "Refreshing changes for station_id {}".format(self.station_id) )
             self.changes.clear()      
             self._get_changes(api)
             self._apply_changes()

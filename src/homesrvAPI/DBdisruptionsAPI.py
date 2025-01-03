@@ -49,6 +49,7 @@ class DBdisruptionsAPI:
     def _refresh_disruptions(self):
         dt_now = datetime.now() 
         if not self.disruptions_date or self.disruptions_date < dt_now-timedelta(seconds=cfg["DB_refresh_disruptions"]): 
+            logging.info( "Refreshing DB disruptions" )
             json = self._do_API_call()
             if json and json.get("disruptions"):
                 self.disruptions = json.get("disruptions")

@@ -47,7 +47,7 @@ class ninaAPI:
         # lookup ars
         for item in self.locations:
             if item["ars"] == ars:
-                logging.debug("Retrieve NINA info for ARS {}, {}".format(item["ars"], item["location"]))
+                logging.info("Retrieve NINA info for ARS {}, {}".format(item["ars"], item["location"]))
                 data = {}
                 data["location"] = item["location"]
                 data["ars"] = item["ars"]
