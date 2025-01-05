@@ -200,6 +200,10 @@ class DBstation:
             self.station_name = timetable.get("@station")
 
             # iterate over all trains in timetable    
+            if isinstance(timetable["s"], dict): 
+                # if timetable["s"] is not a list but consists of single item
+                timetable["s"] = [timetable["s"]]
+
             for item in timetable["s"]: 
                 train = DBtrain_stop()
                 train.base["train_id"] = item.get("@id")

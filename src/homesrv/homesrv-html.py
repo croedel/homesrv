@@ -63,7 +63,7 @@ class HomeSrvHtml:
         logging.info("Copying template files to target html dir {}".format(html_path))
         os.makedirs(html_path, exist_ok=True)
         base_dir = os.path.dirname(__file__) # Base installation directory
-        template_dir = os.path.join(base_dir, os.pardir, "html-templates") 
+        template_dir = os.path.join(base_dir, os.pardir, "templates") 
         for f in os.listdir(template_dir):
             fpath = os.path.join(template_dir, f)
             if os.path.isfile(fpath):
@@ -87,7 +87,7 @@ class HomeSrvHtml:
     #-------------------------------------------
     def _read_html_template(self):
         html_path = cfg["HTML_DIR"]     # HTML directory
-        fname = os.path.join(html_path, "html-template.html")  
+        fname = os.path.join(html_path, "index-template.html")  
         try:
             with open(fname, "r") as file: 
                 data = file.read()   
@@ -99,7 +99,7 @@ class HomeSrvHtml:
     #-------------------------------------------
     def _write_html_file(self, html_data):
         html_path = cfg["HTML_DIR"]     # HTML directory
-        fname = os.path.join(html_path, "homesrv.html")  
+        fname = os.path.join(html_path, "index.html")  
         try:            
             with open(fname, "w", encoding="UTF-8") as file: 
                 file.write(html_data) 
