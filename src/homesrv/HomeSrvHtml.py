@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-homesrv-html - server daemon which retrieves data from configured data sources and writes the data as HTML 
+homesrv-html 
 (c) 2024 by Christian Rödel 
 """
 
@@ -10,7 +10,6 @@ import logging
 import time
 import signal
 import os
-import shutil
 import html
 from homesrv.config import cfg
 from homesrvAPI.awidoAPI import awidoAPI
@@ -23,14 +22,14 @@ from homesrvAPI.ninaAPI import ninaAPI
 class HomeSrvHtml:
     def __init__(self):
         self.last_update = None
+        self.html_data = None
         self._initialize()
 
     #-------------------------------------------
     def refresh(self):
         now = datetime.now()
         if not self.last_update or now > self.last_update + timedelta(seconds=cfg.get("HTML_REFRESH", 60)):
-            self.last_update = now
-            logging.info("Refreshing data")
+            logging.info("Refreshing html data")
             html_data = self._read_html_template()
 
             if self.api_nina: # nina Wetterwarnungen
@@ -50,25 +49,14 @@ class HomeSrvHtml:
                 html_data = html_data.replace('%%DBdisruptions%%', snippet)
 
             # Current Date/Time
-            snippet = '<div class="refresh-date">Letzte Aktualisierung: {}</div>\n'.format(now.strftime("%d.%m.%Y %H:%M:%S"))
+            snippet = '<div class="refresh-date">Aktualisiert am: {}</div>\n'.format(now.strftime("%d.%m.%Y %H:%M:%S"))
             html_data = html_data.replace('%%CurrentDateTime%%', snippet)
-            
-            # Write html file
-            self._write_html_file(html_data)            
+
+            self.last_update = now
+            self.html_data = html_data
 
     #-------------------------------------------
     def _initialize(self):
-        # Copy latest templates to HTML directory
-        html_path = cfg["HTML_DIR"]     # HTML directory
-        logging.info("Copying template files to target html dir {}".format(html_path))
-        os.makedirs(html_path, exist_ok=True)
-        base_dir = os.path.dirname(__file__) # Base installation directory
-        template_dir = os.path.join(base_dir, os.pardir, "templates") 
-        for f in os.listdir(template_dir):
-            fpath = os.path.join(template_dir, f)
-            if os.path.isfile(fpath):
-                shutil.copy2(fpath, html_path)
-
         # Create html entity replacement table
         self.html_map = {k: '&{};'.format(v) for k, v in html.entities.codepoint2name.items()}
         self.html_preserve_tags = self.html_map
@@ -83,32 +71,17 @@ class HomeSrvHtml:
 #        self.api_weather = openweathermapAPI()
         self.api_nina = ninaAPI()
 
-
     #-------------------------------------------
     def _read_html_template(self):
-        html_path = cfg["HTML_DIR"]     # HTML directory
+        html_path = cfg["WEB_ROOT"]     # Web root directory
         fname = os.path.join(html_path, "index-template.html")  
         try:
             with open(fname, "r") as file: 
                 data = file.read()   
+                return data
         except Exception as ex:
-            print("ERROR - Couldn't read {}: {}".format(fname, ex))
+            logging.error("Couldn't read {}: {}".format(fname, ex))
             return None
-        return data
-
-    #-------------------------------------------
-    def _write_html_file(self, html_data):
-        html_path = cfg["HTML_DIR"]     # HTML directory
-        fname = os.path.join(html_path, "index.html")  
-        try:            
-            with open(fname, "w", encoding="UTF-8") as file: 
-                file.write(html_data) 
-        except Exception as ex:
-            logging.error("ERROR - Couldn't write {}: {}".format(fname, ex))
-            return False
-
-        logging.info("Successfully wrote {}".format(fname))
-        return True
 
     #----------------------------------
     def _get_nina_snippet(self):    
@@ -255,6 +228,7 @@ def main():
     logging.info("Entering the main loop")
     while run_status:
         hsrv.refresh()
+        print(hsrv.html_data)
         time.sleep(10)
 
     # clean up

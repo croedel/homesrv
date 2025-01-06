@@ -167,7 +167,7 @@ img a:hover {
 
 .refresh-date {
     font-size: 0.8em;    
-    margin: 16px 0px 10px 0px;
+    margin: -8px 0px 0px 54px;
 }
 
 /* Nina */
@@ -196,7 +196,6 @@ img a:hover {
 
 .db-disruption-headline {
     font-weight: bold;        
-    font-size: 1.1em;
     color: lightblue;
     margin: 6px 0px 0px 0px;
 }
@@ -207,7 +206,6 @@ img a:hover {
 }
 
 .db-disruption-summary {
-    font-size: 0.9em;    
     margin: 6px 0px 6px 0px;
 }
 
