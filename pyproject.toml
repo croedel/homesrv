@@ -35,7 +35,7 @@ homesrvtool = "homesrv.homesrvtool:main"
 script-files = ["src/install_systemd_service.sh"]
 
 [tool.setuptools.dynamic]
-version = {attr = "homesrvmqtt.__version__"}
+version = {attr = "homesrv.__version__"}
 
 [tool.setuptools.package-data]
 homesrv = ["*.yaml"]
