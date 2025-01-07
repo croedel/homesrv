@@ -9,8 +9,8 @@ import urllib
 import os
 import shutil
 import signal
-from config import cfg
-from HomeSrvHtml import HomeSrvHtml
+from homesrv.config import cfg
+from homesrv.HomeSrvHtml import HomeSrvHtml
 
 
 # =======================
