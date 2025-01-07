@@ -3,8 +3,8 @@ requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "homesrv_mqtt"
-description = "Retrieves data from several public available sources and adds them to your MQTT server"
+name = "homesrv"
+description = "Retrieves data from several public available sources and makes them available via HTTP"
 dependencies = [
   "pyyaml", 
   "requests",
@@ -17,7 +17,7 @@ authors = [
 ]
 readme = "README.md"
 license = {file = "LICENSE"}
-keywords = ["MQTT", "DeutscheBahn", "awido", "nina", "openweathermap"]
+keywords = ["DeutscheBahn", "awido", "nina", "openweathermap"]
 classifiers = [
   "Development Status :: 1 - Planning",
   "Programming Language :: Python :: 3.8"
@@ -25,11 +25,11 @@ classifiers = [
 dynamic = ["version"]
 
 [project.urls]
-Repository = "https://github.com/croedel/homesrv_mqtt"
+Repository = "https://github.com/croedel/homesrv"
 
 [project.scripts]
-homesrv = "homesrvmqtt.homesrv:main"
-homesrvtool = "homesrvmqtt.homesrvtool:main"
+homesrv = "homesrv.homeserver:main"
+homesrvtool = "homesrv.homesrvtool:main"
 
 [tool.setuptools]
 script-files = ["src/install_systemd_service.sh"]
@@ -39,3 +39,4 @@ version = {attr = "homesrvmqtt.__version__"}
 
 [tool.setuptools.package-data]
 homesrvmqtt = ["*.yaml"]
+templates = ["*.*"]
