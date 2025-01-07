@@ -28,7 +28,7 @@ dynamic = ["version"]
 Repository = "https://github.com/croedel/homesrv"
 
 [project.scripts]
-homesrv = "homesrv.homeserver:main"
+homeserver = "homesrv.homeserver:main"
 homesrvtool = "homesrv.homesrvtool:main"
 
 [tool.setuptools]
