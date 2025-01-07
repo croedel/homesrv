@@ -95,17 +95,6 @@ def initialize_templates():
         logging.error("Web root directory doesn't exist: {}".format(web_root))
 
 #----------------------
-def httpd_start(addr="localhost", port=8080):
-    global httpd
-    logging.info('Starting httpd on {}:{}'.format(addr, port))
-    httpd = HTTPServer((addr, port), RequestHandler)
-    logging.info('httpd started')
-    try:
-        httpd.serve_forever()
-    except BaseException as e:
-        logging.debug('Exception while serving: {}'.format(e))
-
-#----------------------
 def httpd_stop():
     global httpd
     if httpd:
@@ -124,15 +113,18 @@ def main():
     signal.signal(signal.SIGTERM, signal_handler)
     signal.signal(signal.SIGINT, signal_handler)
 
-    parser = argparse.ArgumentParser(description="HomeSrv HTTP server")
-    parser.add_argument( "-a", "--address", default="localhost", help="Host name or IP address on which the server listens" )
-    parser.add_argument( "-p", "--port", type=int, default=8081, help="Specify the port on which the server listens" )
-    args = parser.parse_args()
-
     initialize_templates()
     hsrv = HomeSrvHtml()
     hsrv.refresh()
-    httpd_start(args.address, args.port)
+
+    logging.info('Starting httpd on {}:{}'.format(cfg['WEB_SERVER'], cfg['WEB_PORT']))
+    httpd = HTTPServer((cfg['WEB_SERVER'], cfg['WEB_PORT']), RequestHandler)
+    logging.info('httpd started')
+    try:
+        httpd.serve_forever()
+    except BaseException as e:
+        logging.debug('Exception while serving: {}'.format(e))
+
     logging.warning('Exiting.')
 
 #----------------------
