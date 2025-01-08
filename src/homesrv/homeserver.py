@@ -4,11 +4,11 @@ Homesrv HTTP Server
 """
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import logging
-import argparse
 import urllib
 import os
 import shutil
 import signal
+import sys
 from homesrv.config import cfg
 from homesrv.HomeSrvHtml import HomeSrvHtml
 
@@ -41,26 +41,32 @@ class RequestHandler(BaseHTTPRequestHandler):
             params = urllib.parse.parse_qs(parts[1])
         else:
             params = ''
-            fname = os.path.join( cfg['WEB_ROOT'], ressource )
-            logging.debug("GET request, ressource: {}, fname: {}, params: {}".format(ressource, fname, str(params)) )  
             if ressource == "index.html":
                 # index.html is dynamically created
+                logging.debug("GET request, dynamic ressource: {}".format(ressource) )  
                 hsrv.refresh()
                 content = hsrv.html_data.encode("utf-8")
                 self._set_header(200, type="html", caching=False)
                 self.wfile.write(content)  
-            else: 
-                # read file from file system    
-                try:
-                    with open(fname, 'rb') as file:
-                        content = file.read()
-                        if fname.endswith(".css"):
-                            self._set_header(200, type="css", caching=False)
-                        else:
-                            self._set_header(200, type="html", caching=True)
-                        self.wfile.write(content)  
-                except IOError as e:
-                    logging.warning("Couldn't open {}".format(e))
+            else: # read file from file system
+                webroot = os.path.normpath(cfg['WEB_ROOT'])    
+                fname = os.path.normpath(os.path.join(webroot, ressource))
+                # Restrict access to files in/below WEB_ROOT - not outside!
+                if os.path.commonpath([webroot, fname]) == webroot:
+                    logging.debug("GET request, ressource: {}, fname: {}, params: {}".format(ressource, fname, str(params)) )  
+                    try:
+                        with open(fname, 'rb') as file:
+                            content = file.read()
+                            if fname.endswith(".css"):
+                                self._set_header(200, type="css", caching=False)
+                            else:
+                                self._set_header(200, type="html", caching=True)
+                            self.wfile.write(content)  
+                    except IOError as e:
+                        logging.warning("Couldn't open {}".format(e))
+                        self._set_header(404)
+                else:
+                    logging.warning("Requested file {} is not in WEB_ROOT - file blocked for securoty reasons-".format(fname))
                     self._set_header(404)
 
     # ----------------------------------
@@ -85,12 +91,16 @@ def initialize_templates():
     web_root = cfg["WEB_ROOT"]     # HTML directory
     base_dir = os.path.dirname(__file__) # Base installation directory
     template_dir = os.path.join(base_dir, os.pardir, "templates") 
-    logging.info("Copying template files {} to web root {}".format(template_dir, web_root))
+    logging.info("Updating template files {} in web root {}".format(template_dir, web_root))
     if os.path.isdir(web_root):
         for f in os.listdir(template_dir):
-            fpath = os.path.join(template_dir, f)
-            if os.path.isfile(fpath):
-                shutil.copy2(fpath, web_root)
+            source = os.path.join(template_dir, f)
+            dest = os.path.join(web_root, f)
+            if os.path.isfile(source):
+                # copy file if destination does not exist
+                if not os.path.exists(dest): # or (os.stat(source).st_mtime - os.stat(dest).st_mtime > 1)
+                    logging.info("Copying template file {}".format(dest))
+                    shutil.copy2(source, dest)
     else:
         logging.error("Web root directory doesn't exist: {}".format(web_root))
 
@@ -118,12 +128,19 @@ def main():
     hsrv.refresh()
 
     logging.info('Starting httpd on {}:{}'.format(cfg['WEB_SERVER'], cfg['WEB_PORT']))
-    httpd = HTTPServer((cfg['WEB_SERVER'], cfg['WEB_PORT']), RequestHandler)
-    logging.info('httpd started')
+    httpd = HTTPServer((cfg['WEB_SERVER'], cfg['WEB_PORT']), RequestHandler, bind_and_activate=False)
+    try:
+        httpd.server_bind()
+        httpd.server_activate()
+        logging.info("httpd started")
+    except BaseException as e:
+        logging.error("Couldn't start http server: {}".format(e))
+        sys.exit(1)
+
     try:
         httpd.serve_forever()
     except BaseException as e:
-        logging.debug('Exception while serving: {}'.format(e))
+        logging.info('Exception while serving: {}'.format(e))
 
     logging.warning('Exiting.')
 

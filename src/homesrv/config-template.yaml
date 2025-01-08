@@ -1,6 +1,13 @@
 --- 
 
 #-------------------------------------------------
+# Webserver settings
+WEB_ROOT:       XXXXXXXXX  # Webserver root directory
+WEB_SERVER:     localhost
+WEB_PORT:       8081
+HTML_REFRESH:   60                      # refresh info every N seconds
+
+#-------------------------------------------------
 # MQTT setting
 
 MQTT_server: localhost      # MQTT server name or IP
