@@ -48,6 +48,10 @@ class HomeSrvHtml:
                 snippet = self._get_disruptions_snippet()    
                 html_data = html_data.replace('%%DBdisruptions%%', snippet)
 
+            if self.api_weather: # Weather
+                snippet = self._get_weather_snippet()    
+                html_data = html_data.replace('%%weather%%', snippet)
+
             # Current Date/Time
             snippet = '<div class="refresh-date">Aktualisiert am: {}</div>\n'.format(now.strftime("%d.%m.%Y %H:%M:%S"))
             html_data = html_data.replace('%%CurrentDateTime%%', snippet)
@@ -68,7 +72,7 @@ class HomeSrvHtml:
         self.api_awido = awidoAPI()
         self.api_db = DBtimetableAPI()
         self.api_disruptions = DBdisruptionsAPI()
-#        self.api_weather = openweathermapAPI()
+        self.api_weather = openweathermapAPI()
         self.api_nina = ninaAPI()
 
     #-------------------------------------------
@@ -182,7 +186,7 @@ class HomeSrvHtml:
                 snippet += '  <div class="db-disruption-line-item">{}</div>\n'.format(i["name"])
             snippet += '</div>\n'
             snippet += '  <div class="db-disruption-headline">{}</div>\n'.format(item["headline"].translate(self.html_map))
-            snippet += '  <div class="db-disruption-reason">Grund: {}</div>\n'.format(item["cause"]["label"].translate(self.html_map))
+            snippet += '  <div class="db-disruption-reason">{}</div>\n'.format(item["cause"]["label"].translate(self.html_map))
             snippet += '  <details>\n' 
             snippet += '    <summary class="db-disruption-summary">{}</summary>\n'.format(item["summary"].translate(self.html_map))
             snippet += '    <div class="db-disruption-text">{}</div>\n'.format(item["text"].translate(self.html_preserve_tags))
@@ -190,6 +194,47 @@ class HomeSrvHtml:
             snippet += '</div>\n\n'
         snippet += '</div>\n\n'    
         return snippet    
+
+    #----------------------------------
+    def _get_weather_snippet(self):
+        snippet = '<div class="weather">\n'
+        for item in self.api_weather.get_locations():
+            snippet += '<h3>{}</h3>\n'.format(item.translate(self.html_map))
+
+            data = self.api_weather.get_weather(item, 'now')
+            snippet += '<div class="weather-location">\n'
+
+            snippet += '<div class="weather-generic">\n'
+            snippet += '  <img src="images/sunrise.png" alt="sunrise">{} Uhr\n'.format(data['sunrise_txt'])
+            snippet += '  <img src="images/sunset.png" alt="sunset">{} Uhr\n'.format(data['sunset_txt'])
+            snippet += '  <img src="images/uvidx.png" alt="uv index">{}\n'.format(data['uv_index_txt'].translate(self.html_map))
+            snippet += '</div>'
+
+            snippet += '<div class="weather-situation">\n'
+            snippet += '  <img src="images/{}" alt="weather situation">\n'.format(data['icon'])
+            snippet += '  <p>{}</p>\n'.format(data['description'].translate(self.html_map))
+            snippet += '</div>'
+
+            snippet += '<ul>'
+            snippet += '<li><img src="images/temp.png" alt="temperature">Temperatur: {}&#8451; (gef&uuml;hlt: {}&#8451;)</li>\n'.format(data['temp'], data['feels_like'])
+            txt = ''
+            if data.get("rain_txt"):
+                txt = ' - Regen: {}'.format(data['rain_txt'].translate(self.html_map))
+            if data.get("snow_txt"):
+                txt = ' - Schneefall: {}'.format(data['snow_txt'].translate(self.html_map))
+            snippet += '<li><img src="images/rainprop.png" alt="rainprop">{}{}</li>\n'.format(data['precipitation_txt'].translate(self.html_map), txt)
+            snippet += '<li><img src="images/humidity.png" alt="humidity">{}&percnt;</li>\n'.format(data['humidity'])
+            snippet += '<li><img src="images/pressure.png" alt="pressure">{}hPa</li>\n'.format(data['pressure'])
+            txt = ''
+            if data.get("wind_gust_kmh"):
+                txt = ' - B&ouml;en: {}km/h'.format(data['wind_gust_kmh'])
+            snippet += '<li><img src="images/wind.png" alt="wind">{}km/h - {}{}</li>\n'.format(data['wind_speed_kmh'], data['wind_direction'], txt)
+            snippet += '</ul>'
+            data = self.api_weather.get_weather(item, 'daytime')
+            snippet += '</div>\n\n'    
+        snippet += '</div>\n\n'    
+        return snippet    
+
 
 '''
             # weather

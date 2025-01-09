@@ -1,7 +1,8 @@
 
-.mainflow {
-    width: 100%;
-    box-sizing: border-box;
+.page {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .menuflow {
@@ -57,10 +58,11 @@
 }
 
 .backbutton {
-    width: 100%;
     float: left;
     position: sticky;
     bottom: 0;
+    background: #212f3d;;
+    padding: 3px;
 }
 
 @media screen and (max-width: 919px) {
@@ -175,6 +177,7 @@ img a:hover {
     border: 2px solid rgb(206, 5, 5);
     background: darkred;
     padding: 4px 10px 4px 10px;
+    margin-bottom: 10px;
 }
 
 .nina-nowarnings {
@@ -201,7 +204,6 @@ img a:hover {
 }
 
 .db-disruption-reason {
-    font-size: 0.8em;
     margin: 6px 0px 6px 0px;
 }
 
@@ -231,3 +233,38 @@ img a:hover {
     height: auto;
     margin: 0px 12px -10px 5px;
 }
+
+.weather li img, .weather-generic img {
+    width: 32px;
+    margin: 0px 10px -10px 5px;    
+}
+
+.weather ul {
+    clear: both;
+    padding: 0px;
+}
+
+.weather-location{
+    border: 2px solid grey;
+    background: rgb(5, 47, 81);
+    padding: 12px 10px 5px 20px;
+}
+.weather-location li
+{
+    list-style-type: none;
+    padding: 4px 0px 4px 0px;
+}
+
+.weather-situation img {
+    width: 120px;
+    float: left;
+}
+
+.weather-situation p {
+    float: left;
+    font-size: 1.3em;
+    padding: 30px 0px 0px 20px
+}
+
+
+

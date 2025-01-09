@@ -144,7 +144,7 @@ class DBstation:
             if tt_type == "arrival":
                 item = schedule_item.get_arrival()
             elif tt_type == "departure":   
-                if schedule_item.departure.get("time") and datetime.strptime(schedule_item.departure["time"], "%d.%m.%Y %H:%M") >= now-timedelta(minutes=1):
+                if schedule_item.departure.get("time") and datetime.strptime(schedule_item.departure["time"], "%d.%m.%Y %H:%M") >= now-timedelta(minutes=3):
                     item = schedule_item.get_departure()
             if item:
                 timetable.append(item)    

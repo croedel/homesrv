@@ -9,12 +9,14 @@
      </head>
 
 <body>
+
+<div class="page">
+
 <div class="header">
-     <h1><a href="#"> <img src="homesrv.png" class="img-logo" alt="Logo" title="Home"></a>HomeServer</h1>
+     <h1><a href="#"> <img src="images/homesrv.png" class="img-logo" alt="HomeSrv Logo" title="Home" onclick="location.reload()""></a>HomeServer</h1>
      %%CurrentDateTime%%    
 </div>     
 
-<div class="mainflow">
 <div class="menuflow">
 
 <div class="services">
@@ -54,6 +56,7 @@
 <div class="menu">
      <p>Inhalt:</p>
      <ul>
+          <li><a href="#weather">Wetter</a></li> 
           <li><a href="#nina">Nina Warnungen</a></li>
           <li><a href="#waste">Abfall</a></li>
           <li><a href="#db">Fahrplan</a></li>
@@ -63,6 +66,9 @@
 </div> <!-- menuflow -->    
 
 <div class="main">
+<h2 id="weather">Wetter</h2>
+%%weather%%
+     
 <h2 id="nina">Nina Warnungen</h2>
 %%Nina%%
 
@@ -76,7 +82,6 @@
 %%DBdisruptions%%
 
 </div> <!-- main -->    
-</div> <!-- mainflow -->
 
 <div class="backbutton"> 
      <a href="#">&raquo;&nbsp;Seitenanfang</a>
@@ -86,6 +91,8 @@
      <hr>    
      &copy; 2025 by Ch. R&ouml;del &mdash; <a href="impressum.html">Impressum</a> 
 </div>
+
+</div> <!-- page -->
 
 </body>
 </html>

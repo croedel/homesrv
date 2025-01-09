@@ -39,4 +39,5 @@ version = {attr = "homesrv.__version__"}
 
 [tool.setuptools.package-data]
 homesrv = ["*.yaml"]
-templates = ["*.*"]
+templates = ["*.*", "images/*.png", , "images/*.jpg"]
+

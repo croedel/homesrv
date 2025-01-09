@@ -84,23 +84,29 @@ def signal_handler(signal_number, frame):
     global httpd
     logging.warning('Received Signal {}. Graceful shutdown initiated.'.format(signal_number))
     httpd_stop(httpd)
-    
+
+#-------------------------------------------
+def copy_files(src_dir, dest_dir):
+    for f in os.listdir(src_dir):
+        src_f = os.path.join(src_dir, f)
+        dest_f = os.path.join(dest_dir, f)
+        if os.path.isfile(src_f):
+            # copy file if destination does not exist or source file is newer
+            if not os.path.exists(dest_f) or (os.stat(src_f).st_mtime - os.stat(dest_f).st_mtime > 1):
+                logging.info("Copying {} --> {}".format(src_f, dest_f))
+                shutil.copy2(src_f, dest_f)
+
 #-------------------------------------------
 def initialize_templates():
     # Copy latest templates to HTML directory
     web_root = cfg["WEB_ROOT"]     # HTML directory
     base_dir = os.path.dirname(__file__) # Base installation directory
     template_dir = os.path.join(base_dir, os.pardir, "templates") 
-    logging.info("Updating template files {} in web root {}".format(template_dir, web_root))
+    logging.info("Updating template files {} to web root {}".format(template_dir, web_root))
     if os.path.isdir(web_root):
-        for f in os.listdir(template_dir):
-            source = os.path.join(template_dir, f)
-            dest = os.path.join(web_root, f)
-            if os.path.isfile(source):
-                # copy file if destination does not exist
-                if not os.path.exists(dest): # or (os.stat(source).st_mtime - os.stat(dest).st_mtime > 1)
-                    logging.info("Copying template file {}".format(dest))
-                    shutil.copy2(source, dest)
+        copy_files(template_dir, web_root)
+        os.makedirs(os.path.join(web_root, "images"), exist_ok=True)
+        copy_files(os.path.join(template_dir, "images"), os.path.join(web_root, "images"))
     else:
         logging.error("Web root directory doesn't exist: {}".format(web_root))
 
