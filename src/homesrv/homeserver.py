@@ -101,7 +101,7 @@ def initialize_templates():
     # Copy latest templates to HTML directory
     web_root = cfg["WEB_ROOT"]     # HTML directory
     base_dir = os.path.dirname(__file__) # Base installation directory
-    template_dir = os.path.join(base_dir, os.pardir, "templates") 
+    template_dir = os.path.join(base_dir, os.pardir, "homesrv-templates") 
     logging.info("Updating template files {} to web root {}".format(template_dir, web_root))
     if os.path.isdir(web_root):
         copy_files(template_dir, web_root)

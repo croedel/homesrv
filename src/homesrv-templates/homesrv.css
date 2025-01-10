@@ -173,10 +173,28 @@ img a:hover {
 }
 
 /* Nina */
-.nina-warning {
+.nina-warning-extreme {
     border: 2px solid rgb(206, 5, 5);
     background: darkred;
-    padding: 4px 10px 4px 10px;
+    padding: 4px 10px 10px 10px;
+    margin-bottom: 10px;
+}
+.nina-warning-severe {
+    border: 2px solid orange;
+    background: rgb(5, 47, 81);
+    padding: 4px 10px 10px 10px;
+    margin-bottom: 10px;
+}
+.nina-warning-moderate {
+    border: 2px solid yellow;
+    padding: 4px 10px 10px 10px;
+    background: rgb(5, 47, 81);
+    margin-bottom: 10px;
+}
+.nina-warning-minimal {
+    border: 2px solid lightgreen;
+    padding: 4px 10px 10px 10px;
+    background: rgb(5, 47, 81);
     margin-bottom: 10px;
 }
 
@@ -187,7 +205,15 @@ img a:hover {
 
 .nina-warning-headline {
     font-weight: bold;        
+    padding: 6px 0px 10px 0px;
+    width: 100%
 }  
+
+.nina-warning-headline img {
+    width: 65px;
+    margin: -12px 10px -10px -10px;
+    float: left;
+}
 
 /* DB */
 .db-disruption  {
@@ -256,13 +282,13 @@ img a:hover {
 }
 
 .weather-situation img {
-    width: 120px;
+    width: 100px;
     float: left;
 }
 
 .weather-situation p {
     float: left;
-    font-size: 1.3em;
+    font-size: 1.2em;
     padding: 30px 0px 0px 20px
 }
 

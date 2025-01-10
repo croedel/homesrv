@@ -76,16 +76,27 @@ class HomeSrvHtml:
         self.api_nina = ninaAPI()
 
     #-------------------------------------------
-    def _read_html_template(self):
-        html_path = cfg["WEB_ROOT"]     # Web root directory
-        fname = os.path.join(html_path, "index-template.html")  
+    def _read_file(self, fname):
         try:
             with open(fname, "r") as file: 
                 data = file.read()   
                 return data
         except Exception as ex:
-            logging.error("Couldn't read {}: {}".format(fname, ex))
+            logging.debug("Couldn't read {}: {}".format(fname, ex))
             return None
+
+    #-------------------------------------------
+    def _read_html_template(self):
+        html_path = cfg["WEB_ROOT"]     # Web root directory
+        fname_user = os.path.join(html_path, "index.html") 
+        fname_template = os.path.join(html_path, "index-template.html")
+        # Try to read index.html (user generated) and use index-template.html as fallback
+        data = self._read_file(fname_user)
+        if not data: 
+            data = self._read_file(fname_template)  
+        if not data:
+            logging.critical("Couldn't read {}: {}".format(fname, ex))
+        return data    
 
     #----------------------------------
     def _get_nina_snippet(self):    
@@ -98,10 +109,19 @@ class HomeSrvHtml:
                 snippet += '<div class="nina-nowarnings">\n'
                 snippet += 'Keine Warnungen\n'.translate(self.html_map)
                 snippet += '</div>\n\n'
-            else:        
+            else:
                 for item in data["warnings"]:
-                    snippet += '<div class="nina-warning">\n'
-                    snippet += '  <div class="nina-warning-headline">{} ({})</div>\n'.format(item["headline"].translate(self.html_map), 
+                    if item["severity"] == "Extreme":
+                        css_class = "nina-warning-extreme"
+                    elif item["severity"] == "Severe":
+                        css_class = "nina-warning-severe"
+                    elif item["severity"] == "Moderate":
+                        css_class = "nina-warning-moderate"
+                    else: # Minimal or Unknown
+                        css_class = "nina-warning-minimal"
+
+                    snippet += '<div class="{}">\n'.format(css_class)
+                    snippet += '  <div class="nina-warning-headline"><img src="images/alert.png" alt="alert" title="Achtung!">{} ({})</div>\n'.format(item["headline"].translate(self.html_map), 
                                                                                         item["severity"].translate(self.html_map)) 
                     snippet += '  <div class="nina-warning-desc">{}</div>\n'.format(item["description"].translate(self.html_map))
                     snippet += '</div>\n\n'
@@ -205,53 +225,35 @@ class HomeSrvHtml:
             snippet += '<div class="weather-location">\n'
 
             snippet += '<div class="weather-generic">\n'
-            snippet += '  <img src="images/sunrise.png" alt="sunrise">{} Uhr\n'.format(data['sunrise_txt'])
-            snippet += '  <img src="images/sunset.png" alt="sunset">{} Uhr\n'.format(data['sunset_txt'])
-            snippet += '  <img src="images/uvidx.png" alt="uv index">{}\n'.format(data['uv_index_txt'].translate(self.html_map))
+            snippet += '  <img src="images/sunrise.png" alt="sunrise" title="Sonnenaufgang">{} Uhr\n'.format(data['sunrise_txt'])
+            snippet += '  <img src="images/sunset.png" alt="sunset" title="Sonnenuntergang">{} Uhr\n'.format(data['sunset_txt'])
+            snippet += '  <img src="images/uvidx.png" alt="uv index" title="UV-Index">{}\n'.format(data['uv_index_txt'].translate(self.html_map))
             snippet += '</div>'
 
             snippet += '<div class="weather-situation">\n'
-            snippet += '  <img src="images/{}" alt="weather situation">\n'.format(data['icon'])
+            snippet += '  <img src="images/{}" alt="weather situation" title="Wetterlage">\n'.format(data['icon'])
             snippet += '  <p>{}</p>\n'.format(data['description'].translate(self.html_map))
             snippet += '</div>'
 
             snippet += '<ul>'
-            snippet += '<li><img src="images/temp.png" alt="temperature">Temperatur: {}&#8451; (gef&uuml;hlt: {}&#8451;)</li>\n'.format(data['temp'], data['feels_like'])
+            snippet += '<li><img src="images/temp.png" alt="temperature" title="Temperatur">{}&#8451; (gef&uuml;hlt: {}&#8451;)</li>\n'.format(data['temp'], data['feels_like'])
             txt = ''
             if data.get("rain_txt"):
                 txt = ' - Regen: {}'.format(data['rain_txt'].translate(self.html_map))
             if data.get("snow_txt"):
                 txt = ' - Schneefall: {}'.format(data['snow_txt'].translate(self.html_map))
-            snippet += '<li><img src="images/rainprop.png" alt="rainprop">{}{}</li>\n'.format(data['precipitation_txt'].translate(self.html_map), txt)
-            snippet += '<li><img src="images/humidity.png" alt="humidity">{}&percnt;</li>\n'.format(data['humidity'])
-            snippet += '<li><img src="images/pressure.png" alt="pressure">{}hPa</li>\n'.format(data['pressure'])
+            snippet += '<li><img src="images/rainprop.png" alt="rainprop" title="Niederschlag">{}{}</li>\n'.format(data['precipitation_txt'].translate(self.html_map), txt)
+            snippet += '<li><img src="images/humidity.png" alt="humidity" title="Luftfeuchtigkeit">{}&percnt;</li>\n'.format(data['humidity'])
+            snippet += '<li><img src="images/pressure.png" alt="pressure" title="Luftdruck">{}hPa</li>\n'.format(data['pressure'])
             txt = ''
-            if data.get("wind_gust_kmh"):
+            if data.get("wind_gust_kmh") and int(data.get("wind_gust_kmh", 0))>0:
                 txt = ' - B&ouml;en: {}km/h'.format(data['wind_gust_kmh'])
-            snippet += '<li><img src="images/wind.png" alt="wind">{}km/h - {}{}</li>\n'.format(data['wind_speed_kmh'], data['wind_direction'], txt)
+            snippet += '<li><img src="images/wind.png" alt="wind" title="Wind">{}km/h - {}{}</li>\n'.format(data['wind_speed_kmh'], data['wind_direction'], txt)
             snippet += '</ul>'
             data = self.api_weather.get_weather(item, 'daytime')
             snippet += '</div>\n\n'    
         snippet += '</div>\n\n'    
         return snippet    
-
-
-'''
-            # weather
-            if api_weather:
-                for location in api_weather.get_locations():
-                    topic = "weather/{}".format(location)
-                    data = api_weather.get_weather(location, 'base')
-
-                    topic = "weather/{}/now".format(location)
-                    data = api_weather.get_weather(location, 'now')
-
-                    topic = "weather/{}/daytime".format(location)
-                    data = api_weather.get_weather(location, 'daytime')
-
-                    topic = "weather/{}/daily".format(location)
-                    data = api_weather.get_weather(location, 'daily')
-'''
 
 #==========================================
 
