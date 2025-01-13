@@ -135,9 +135,9 @@ class HomeSrvHtml:
         snippet += '<h3>{}</h3>\n'.format(self.api_awido.title.translate(self.html_map))
         snippet += '<table class="waste-table">\n'
         snippet += '<tr>\n'
-        snippet += '  <th>Datum</td>\n'
-        snippet += '  <th>Typ</td>\n'
-        snippet += '  <th>Ort</td>\n'
+        snippet += '  <th>Datum</th>\n'
+        snippet += '  <th>Typ</th>\n'
+        snippet += '  <th>Ort</th>\n'
         snippet += '</tr>\n'
         for item in self.api_awido.upcoming_collections():
             snippet += '<tr>\n'
@@ -159,11 +159,11 @@ class HomeSrvHtml:
             snippet += '<h3>{}</h3>\n'.format(dbstation.station_name.translate(self.html_map))
             snippet += '<table class="db-table">\n'
             snippet += '<tr>\n'
-            snippet += '  <th>Zeit</td>\n'
-            snippet += '  <th>Zug</td>\n'
-            snippet += '  <th>Ziel</td>\n'
-            snippet += '  <th>Gleis</td>\n'
-            snippet += '  <th>Status</td>\n'
+            snippet += '  <th>Zeit</th>\n'
+            snippet += '  <th>Zug</th>\n'
+            snippet += '  <th>Ziel</th>\n'
+            snippet += '  <th>Gleis</th>\n'
+            snippet += '  <th>Status</th>\n'
             snippet += '</tr>\n'
             for item in dbtt.timetable:
                 dtime = datetime.strptime(item["date"], "%d.%m.%Y %H:%M")
@@ -224,18 +224,20 @@ class HomeSrvHtml:
             data = self.api_weather.get_weather(item, 'now')
             snippet += '<div class="weather-location">\n'
 
+            snippet += '<div class="weather-overview">\n'
             snippet += '<div class="weather-generic">\n'
             snippet += '  <img src="images/sunrise.png" alt="sunrise" title="Sonnenaufgang">{} Uhr\n'.format(data['sunrise_txt'])
             snippet += '  <img src="images/sunset.png" alt="sunset" title="Sonnenuntergang">{} Uhr\n'.format(data['sunset_txt'])
             snippet += '  <img src="images/uvidx.png" alt="uv index" title="UV-Index">{}\n'.format(data['uv_index_txt'].translate(self.html_map))
-            snippet += '</div>'
-
+            snippet += '</div>\n'
             snippet += '<div class="weather-situation">\n'
             snippet += '  <img src="images/{}" alt="weather situation" title="Wetterlage">\n'.format(data['icon'])
             snippet += '  <p>{}</p>\n'.format(data['description'].translate(self.html_map))
-            snippet += '</div>'
+            snippet += '</div>\n'
+            snippet += '</div>\n'
 
-            snippet += '<ul>'
+            snippet += '<div class="weather-detail">\n'
+            snippet += '<ul>\n'
             snippet += '<li><img src="images/temp.png" alt="temperature" title="Temperatur">{}&#8451; (gef&uuml;hlt: {}&#8451;)</li>\n'.format(data['temp'], data['feels_like'])
             txt = ''
             if data.get("rain_txt"):
@@ -249,9 +251,10 @@ class HomeSrvHtml:
             if data.get("wind_gust_kmh") and int(data.get("wind_gust_kmh", 0))>0:
                 txt = ' - B&ouml;en: {}km/h'.format(data['wind_gust_kmh'])
             snippet += '<li><img src="images/wind.png" alt="wind" title="Wind">{}km/h - {}{}</li>\n'.format(data['wind_speed_kmh'], data['wind_direction'], txt)
-            snippet += '</ul>'
+            snippet += '</ul>\n'
             data = self.api_weather.get_weather(item, 'daytime')
-            snippet += '</div>\n\n'    
+            snippet += '</div>\n'    
+            snippet += '</div>\n\n'
         snippet += '</div>\n\n'    
         return snippet    
 
